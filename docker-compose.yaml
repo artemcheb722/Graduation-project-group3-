@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  local_database:
+    image: postgres:16-alpine
+    container_name: local_database
+    hostname: local_database
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "6655:${POSTGRES_PORT}"
+    volumes:
+      - postgres_datastorage:/var/lib/postgresgl/data
+    networks:
+      - main_network
+networks:
+  main_network:
+    driver: bridge
+
+volumes:
+  postgres_datastorage:
+    external: false
+
+
