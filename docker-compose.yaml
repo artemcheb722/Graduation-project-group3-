@@ -10,3 +10,8 @@ services:
       - "8100:8010"
     volumes:
       - ./documentation:/docs:ro
+
+
+  backend_api:
+    build:
+      dockerfile:
