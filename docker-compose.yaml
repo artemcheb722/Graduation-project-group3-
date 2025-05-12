@@ -28,7 +28,7 @@ services:
   backend_api:
     build:
       dockerfile: Dockerfile
-      context: ./Backend_api
+      context: backend_api
     container_name: backend_api
     hostname: backend_api
     restart: always
