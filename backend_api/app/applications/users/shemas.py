@@ -23,8 +23,3 @@ class PasswordField(BaseModel):
 
 class RegisterUserFields(BaseFields, PasswordField):
     pass
-
-
-
-
-

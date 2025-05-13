@@ -1,8 +1,8 @@
-site_name: SiteGroup3
-
+site_name: restaurant reviews
 nav:
   - About: index.md
   - Tasks: tasks.md
+  - Technologies: techno.md
 
 
 theme:
