@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from applications.auth.password_handler import PasswordEncrypt
 from applications.users.models import User
 from applications.users.shemas import BaseFields, RegisterUserFields
 from database.session_dependencies import get_async_session
-from applications.auth.password_handler import PasswordEncrypt
 
 router_users = APIRouter()
 
