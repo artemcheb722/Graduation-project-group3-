@@ -1,4 +1,4 @@
-[tool.poetry]
+[project]
 name = "backend-api"
 version = "0.1.0"
 description = ""
