@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from applications.Restaurants.router import router_restaurants
 from applications.users.router import router_users
-from backend_api.app.settings import settings
+from settings import settings
 
 
 def get_application() -> FastAPI:
