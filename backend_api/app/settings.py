@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
 
     DEBUG: bool = False
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
 
     @property
     def DATABASE_URL_ASYNC(self) -> str:
