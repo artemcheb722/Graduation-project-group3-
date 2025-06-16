@@ -19,3 +19,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(100), index=True)
     email: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str]
+
+
+    is_admin: Mapped[bool] = mapped_column(default=False, nullable=True)
+    is_verified: Mapped[bool] = mapped_column(default=False, nullable=True)
