@@ -1,0 +1,29 @@
+body {
+    background-color: #e0f7fa;
+}
+
+
+body {
+  background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+  background-color: #ffffff;
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+  background-color: #4a90e2;
+  border: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #357ABD;
+}
