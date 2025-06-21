@@ -6,6 +6,11 @@
 - Alembic
 - PostgreSQL
 - Poetry 
+- S3
+- Nginx
+- Git
+- Neon
+- RabbitMQ
 
 # Examples API
 

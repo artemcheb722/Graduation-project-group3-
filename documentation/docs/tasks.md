@@ -1,15 +1,8 @@
-# Image insert
+# Tasks
+- Зробити проект до 27.06.25
+- Поширитись на всі заклади в Україні
+- Перемкнути проект на кращі Технології
 
 
 
 
-# insert a piece of code
-
-```commandline
-docker compose up
-```
-
-```python
-def create_docs():
-    print(123)
-```
