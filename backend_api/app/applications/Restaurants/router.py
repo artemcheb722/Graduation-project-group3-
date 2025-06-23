@@ -1,13 +1,14 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends, status, Body, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.s3.s3 import s3_storage
 from applications.Restaurants.models_restaurants import Restaurants
 from database.session_dependencies import get_async_session
 import uuid
-
-from applications.Restaurants.crud import create_restaurant_in_db
-
-from applications.Restaurants.schemas import RestaurantSchema
+from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data
+from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema
+from applications.auth.security import admin_required
+from applications.users.models import User
 
 router_restaurants = APIRouter()
 
@@ -15,7 +16,7 @@ router_restaurants = APIRouter()
 
 
 
-@router_restaurants.post("/create", status_code=status.HTTP_201_CREATED)
+@router_restaurants.post("/create", dependencies=[Depends(admin_required)])
 async def create_restaurant(
     main_image: UploadFile,
     images: list[UploadFile] = None,
@@ -33,7 +34,17 @@ async def create_restaurant(
         url = await s3_storage.upload_product_image(image, restaurant_uuid=restaurant_uuid)
         images_urls.append(url)
 
-    created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name, description=description, menu=menu,
-                                feedback=feedback,main_image=main_image, images=images_urls, session=session)
+    created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name,
+                                                        description=description, menu=menu,
+                                                        feedback=feedback, main_image=main_image, images=images_urls,
+                                                        session=session)
+
     return created_restaurant
 
+@router_restaurants.get('/{pk}')
+async def get_restaurant(pk: int):
+    return
+@router_restaurants.get('/')
+async def get_restaurants(params: Annotated[SearchParamsSchema, Depends()], session: AsyncSession = Depends(get_async_session)):
+    result = await get_restaurants_data(params, session)
+    return result
