@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інфо о ресторанах</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #FAFAFA;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            position: relative;
+        }
+
+        .restaurant-info {
+            flex: 3;
+            padding-right: 20px;
+        }
+
+        .restaurant-photo {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .menu,
+        .reviews {
+            background-color: #fff8d5;
+            border-left: 4px solid #FFF8E1;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .form-box {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+        .form-box input,
+        .form-box textarea {
+            width: 95%;
+            margin-bottom: 10px;
+            padding: 8px;
+        }
+
+        .form-box button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .restaurant-card {
+            background-color: #add8e6;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px auto;
+            max-width: 900px;
+            width: 100%;
+
+            .more-info-btn {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background 0.3s;
+            }
+
+            .more-info-btn:hover {
+                background-color: #0056b3;
+            }
+
+            .review-form-wrapper {
+                margin-top: 20px;
+                padding: 10px;
+                background: #fff8d5;
+                border-radius: 12px;
+                border-left: 4px solid #FFF8E1;
+            }
+
+            .review-form-wrapper h4 {
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+
+            .review-input {
+                width: 100%;
+                min-height: 60px;
+                padding: 10px;
+                border: none;
+                border-radius: 20px;
+                background: #ffffff;
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+                resize: none;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .submit-review-btn {
+                padding: 8px 20px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background 0.3s;
+            }
+
+            .submit-review-btn:hover {
+                background: #0056b3;
+            }
+
+        }
+    </style>
+</head>
+<body>
+</br>
+</br>
+{% for restaurant in restaurants %}
+
+    <div class="container">
+        <div class="restaurant-card">
+            <div class="restaurant-info">
+                <img src="{{ restaurant.main_image }}" alt="Фото ресторана" class="restaurant-photo">
+                <h2>{{ restaurant.name }}</h2>
+                <p>{{ restaurant.description }}</p>
+
+                <div class="menu">
+                    <h3>Меню:</h3>
+                    <ul>
+                        {% for item in restaurant.menu.split('\n') %}
+                            <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="reviews">
+                    <h3>Відгуки:</h3>
+
+                </div>
+                <div class="review-form-wrapper">
+                    <h4>Залишити відгук:</h4>
+                    <textarea class="review-input" placeholder="Напишіть свій відгук..."></textarea>
+                    <button class="submit-review-btn">Відправити відгук</button>
+                </div>
+                <div class="more-info" style="margin-top: 10px;">
+                    <a href="#" class="more-info-btn">Дізнатися більше</a>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</body>
+</html>
