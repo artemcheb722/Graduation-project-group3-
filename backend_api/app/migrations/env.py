@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
-
+from applications.feedbacks.models import Feedbacks
 from applications.Restaurants.models_restaurants import Restaurants
 from applications.users.models import User
 from database.base_models import Base

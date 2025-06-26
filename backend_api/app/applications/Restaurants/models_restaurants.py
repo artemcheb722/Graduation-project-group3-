@@ -15,10 +15,10 @@ class Restaurants(Base):
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     uuid_data: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)
 
-    name: Mapped[str] = mapped_column(String(50), index=True, nullable=False)
-    description: Mapped[str] = mapped_column(String(150), nullable=False)
-    menu: Mapped[str] = mapped_column(String(100), nullable=False)
-    feedback: Mapped[str] = mapped_column(String(120), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
+    description: Mapped[str] = mapped_column(String(250), nullable=False)
+    menu: Mapped[str] = mapped_column(String(400), nullable=False)
+    feedback: Mapped[str] = mapped_column(String(250), nullable=False)
     main_image: Mapped[str] = mapped_column(nullable=False)
     images: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
 
