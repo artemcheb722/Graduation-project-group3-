@@ -76,7 +76,7 @@
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
             margin: 0 auto 20px auto;
-            max-width: 700px;
+            max-width: 900px;
             width: 100%;
 
             .more-info-btn {
@@ -152,7 +152,7 @@
                 <div class="menu">
                     <h3>Меню:</h3>
                     <ul>
-                        {% for item in restaurant.menu.split() %}
+                        {% for item in restaurant.menu.split('\n') %}
                             <li>{{ item }}</li>
                         {% endfor %}
                     </ul>
@@ -160,7 +160,7 @@
 
                 <div class="reviews">
                     <h3>Відгуки:</h3>
-                    {{ restaurant.feedback }}
+
                 </div>
                 <div class="review-form-wrapper">
                     <h4>Залишити відгук:</h4>

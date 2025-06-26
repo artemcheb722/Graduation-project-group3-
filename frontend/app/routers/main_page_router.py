@@ -13,8 +13,9 @@ templates = Jinja2Templates(directory='templates')
 
 
 
-@router.post('/')
+
 @router.get('/')
+@router.post('/')
 async def index(request: Request, query: str = Form(''), user: dict=Depends(get_current_user_with_token)):
     restaurants = await get_restaurants(query)
     context = {'request': request, "restaurants": restaurants['items']}

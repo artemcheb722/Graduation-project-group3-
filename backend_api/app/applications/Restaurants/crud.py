@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import asc, desc, select, func, or_
+from sqlalchemy import asc, desc, select, func, or_, and_
 import math
 
 from applications.Restaurants.schemas import SearchParamsSchema, SortEnum, SortByEnum
@@ -29,26 +29,25 @@ async def get_restaurants_data(params: SearchParamsSchema, session: AsyncSession
     count_query = select(func.count()).select_from(Restaurants)
 
     order_direction = asc if params.order_direction == SortEnum.ASC else desc
-
-    # if params.q:
     if params.q:
+        search_fields = [Restaurants.name, Restaurants.description]
         if params.use_sharp_q_filter:
-
             cleaned_query = params.q.strip().lower()
-            search_fields = [Restaurants.name, Restaurants.description]
-            search_condition = or_(*[func.lower(field) == cleaned_query for field in search_fields])
-
+            search_condition = [func.lower(search_field) == cleaned_query for search_field in search_fields]
+            query = query.filter(or_(*search_condition))
+            count_query = count_query.filter(or_(*search_condition))
+        else:
+            words = [word for word in params.q.strip().split() if len(word) > 1]
+            search_condition = or_(
+                and_(*(search_field.icontains(word) for word in words)) for search_field in search_fields
+            )
             query = query.filter(search_condition)
             count_query = count_query.filter(search_condition)
 
-
-
-
-    offset = (params.page - 1) * params.limit
-    query = query.offset(offset).limit(params.limit)
     result = await session.execute(query)
     result_count = await session.execute(count_query)
     total = result_count.scalar()
+
     return {
         "items": result.scalars().all(),
         "total": total,
