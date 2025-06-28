@@ -55,3 +55,8 @@ async def get_restaurants_data(params: SearchParamsSchema, session: AsyncSession
         'limit': params.limit,
         'pages': math.ceil(total / params.limit)
     }
+
+async def get_restaurant_by_pk(pk: int, session: AsyncSession) -> Restaurants | None:
+    query = select(Restaurants).filter(Restaurants.id == pk)
+    result = await session.execute(query)
+    return result.scalar_one_or_none()
