@@ -1,10 +1,10 @@
 import uuid
 from datetime import datetime
-
+from sqlalchemy import JSON
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
-
+from typing import List, Dict
 from database.base_models import Base
 
 
@@ -20,6 +20,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True)
     hashed_password: Mapped[str]
 
-
     is_admin: Mapped[bool] = mapped_column(default=False, nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=True)
+
+    comments: Mapped[List[Dict]] = mapped_column(JSON,default=list, nullable=True)
+
+
+
