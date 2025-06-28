@@ -53,3 +53,10 @@ async def get_restaurants(q: str = ""):
 
         )
         return response.json()
+
+async def get_restaurant(pk: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=f'{settings.BACKEND_API}/restaurants/{pk}',
+        )
+        return response.json()

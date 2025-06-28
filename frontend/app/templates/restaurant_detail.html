@@ -1,0 +1,74 @@
+{% extends "components/base.html" %}
+
+
+
+
+{% block content %}
+    <style>
+        body {
+            background-color: #FAFAFA;
+            font-family: Arial, sans-serif;
+        }
+
+        .carousel-img {
+            max-height: 450px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .menu-section {
+            background-color: #fff8d5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            border-left: 6px solid #ffefc5;
+        }
+    </style>
+    </head>
+    <body>
+
+    <div class="container my-5">
+
+
+        <h1 class="mb-4 text-center">{{ restaurant.name }}</h1>
+
+
+        <div id="carouselRestaurant" class="carousel slide mb-5" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in restaurant.images %}
+                    <div class="carousel-item {% if loop.first %}active{% endif %}">
+                        <img src="{{ image }}" class="d-block w-100 carousel-img" alt="Фото ресторану">
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselRestaurant"
+                    data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselRestaurant"
+                    data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+
+        <div class="mb-4">
+            <h3>Опис ресторану</h3>
+            <p>{{ restaurant.description }}</p>
+        </div>
+
+
+        <div class="menu-section">
+            <h4>Меню</h4>
+            <ul>
+                {% for item in restaurant.menu.split(' ') %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    </body>
+
+
+{% endblock %}
