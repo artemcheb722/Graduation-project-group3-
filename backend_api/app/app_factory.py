@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from sys import prefix
 
+from fastapi import FastAPI
+from applications.feedbacks.router import router_feedbacks
 from applications.auth.router import router_auth
 from applications.Restaurants.router import router_restaurants
 from applications.users.router import router_users
@@ -12,4 +14,5 @@ def get_application() -> FastAPI:
     app.include_router(router_users, prefix="/users", tags=["Users"])
     app.include_router(router_restaurants, prefix="/restaurants", tags=["Restaurants"])
     app.include_router(router_auth, prefix="/auth", tags=["Auth"])
+    app.include_router(router_feedbacks, prefix='/feedbacks', tags=["Feedbacks"])
     return app

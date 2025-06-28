@@ -160,12 +160,24 @@
 
                 <div class="reviews">
                     <h3>Відгуки:</h3>
-
+                    {% if feedbacks %}
+                        <ul>
+                            {% for f in feedbacks %}
+                                <li><strong>{{ f.user_name }}:</strong> {{ f.comment }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>Поки що відгуків немає.</p>
+                    {% endif %}
                 </div>
+
                 <div class="review-form-wrapper">
-                    <h4>Залишити відгук:</h4>
-                    <textarea class="review-input" placeholder="Напишіть свій відгук..."></textarea>
-                    <button class="submit-review-btn">Відправити відгук</button>
+                    <form action="/feedbacks/create" method="post">
+                        <input type="hidden" name="restaurant_id" value="{{ restaurant.id }}">
+                        <textarea class="review-input" name="comment" placeholder="Напишіть свій відгук..."
+                                  required></textarea>
+                        <button class="submit-review-btn" type="submit">Відправити відгук</button>
+                    </form>
                 </div>
                 <div class="more-info" style="margin-top: 10px;">
                     <a href="#" class="more-info-btn">Дізнатися більше</a>

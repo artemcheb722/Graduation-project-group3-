@@ -53,3 +53,24 @@ async def get_restaurants(q: str = ""):
 
         )
         return response.json()
+
+async def create_feedback(user_id: int, restaurant_id: int, comment: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            url=f"{settings.BACKEND_API}/feedbacks/create",
+            json={
+                "user_id": user_id,
+                "restaurant_id": restaurant_id,
+                "comment": comment
+            },
+            headers={"Content-Type": "application/json"}
+        )
+        return response.json()
+
+
+async def get_restaurant_feedbacks(restaurant_id: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=f"{settings.BACKEND_API}/feedbacks/restaurant/{restaurant_id}"
+        )
+        return response.json()
