@@ -6,6 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 from typing import List, Dict
 from database.base_models import Base
+from sqlalchemy.ext.mutable import MutableList
 
 
 class User(Base):
@@ -23,7 +24,7 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(default=False, nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=True)
 
-    comments: Mapped[List[Dict]] = mapped_column(JSON,default=list, nullable=True)
+    comments: Mapped[List[Dict]] = mapped_column(MutableList.as_mutable(JSON),default=list,nullable=True)
 
 
 

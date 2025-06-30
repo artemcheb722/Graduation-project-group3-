@@ -14,7 +14,7 @@ router_restaurants = APIRouter()
 
 
 @router_restaurants.post("/create",
-                         dependencies=[Depends(admin_required)]
+                         # dependencies=[Depends(admin_required)]
                          )
 async def create_restaurant(
         main_image: UploadFile,

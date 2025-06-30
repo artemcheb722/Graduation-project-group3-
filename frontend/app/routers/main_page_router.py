@@ -2,10 +2,10 @@ from fastapi import APIRouter, Request, Form, Depends, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import  RedirectResponse
 
-from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant
+from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant, get_user_info
 
 
-from backend_api.api import register_user
+from backend_api.api import register_user, send_comment
 
 router = APIRouter()
 
@@ -16,13 +16,64 @@ templates = Jinja2Templates(directory='templates')
 
 @router.get('/')
 @router.post('/')
-async def index(request: Request, query: str = Form(''), user: dict=Depends(get_current_user_with_token)):
-    restaurants = await get_restaurants(query)
-    context = {'request': request, "restaurants": restaurants['items']}
+async def index(request: Request, query: str = Form(''), user: dict = Depends(get_current_user_with_token)):
+    restaurants_response = await get_restaurants(query)
+    restaurants = restaurants_response['items']
+
+    for restaurant in restaurants:
+        restaurant['comments'] = [
+            {
+                "text": comment["text"],
+                "author": comment.get("author_name", "Anon")
+            }
+            for comment in user.get('comments', [])
+                if int(comment["restaurant_id"]) == int(restaurant["id"])
+        ]
+
+    context = {'request': request, 'restaurants': restaurants}
     if user.get('name'):
         context['user'] = user
-    response = templates.TemplateResponse('index.html', context=context)
-    return response
+
+    return templates.TemplateResponse('index.html', context=context)
+
+
+@router.post("/add_comment/{restaurant_id}", name="add_comment")
+async def add_comment(
+    restaurant_id: int,
+    request: Request,
+    comment_text: str = Form(...),
+    user: dict = Depends(get_current_user_with_token)
+):
+    if not user.get("access_token"):
+        return RedirectResponse(request.url_for("login"), status_code=status.HTTP_303_SEE_OTHER)
+
+
+    await send_comment(user["access_token"], restaurant_id, comment_text, user["name"])
+
+
+    updated_user = await get_user_info(user["access_token"])
+
+    restaurants_response = await get_restaurants("")
+    restaurants = restaurants_response["items"]
+
+    for restaurant in restaurants:
+        restaurant['comments'] = [
+            {
+                "text": comment["text"],
+                "author": comment.get("author_name", "Anon")
+            }
+            for comment in updated_user.get("comments", [])
+            if int(comment["restaurant_id"]) == int(restaurant["id"])
+        ]
+
+    context = {
+        'request': request,
+        'restaurants': restaurants,
+        'user': updated_user
+    }
+
+    return templates.TemplateResponse("index.html", context=context)
+
 
 
 
@@ -30,9 +81,17 @@ async def index(request: Request, query: str = Form(''), user: dict=Depends(get_
 @router.get('/restaurant/{restaurant_id}')
 async def restaurant_detail(request: Request, restaurant_id: int, user: dict = Depends(get_current_user_with_token)):
     restaurant = await get_restaurant(restaurant_id)
+    comments = []
+    if user.get("comments"):
+        comments = [
+            comment["text"]
+            for comment in user["comments"]
+            if comment.get("restaurant_id") == restaurant_id
+        ]
     context = {
         'request': request,
         "restaurant": restaurant,
+        "comments": comments,
     }
     if user.get('name'):
         context['user'] = user
