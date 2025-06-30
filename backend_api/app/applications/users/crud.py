@@ -11,11 +11,9 @@ from applications.users.models import User
 
 async def create_user_in_db(email, name, password, session: AsyncSession) -> User:
     hashed_password = await PasswordEncrypt.get_password_hash(password)
-    new_user = User(email=email, hashed_password=hashed_password, name=name)
+    new_user = User(email=email,hashed_password=hashed_password,name=name)
     session.add(new_user)
-
     await session.commit()
-    # await session.refresh(new_user)
     return new_user
 
 

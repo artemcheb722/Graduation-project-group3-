@@ -1,37 +1,133 @@
 {% extends "components/base.html" %}
 
-
-
-
 {% block content %}
     <style>
         body {
             background-color: #FAFAFA;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 3rem auto 5rem auto;
+            padding: 0 15px;
+        }
+
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
         }
 
         .carousel-img {
             max-height: 450px;
             object-fit: cover;
-            border-radius: 12px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-img:hover {
+            transform: scale(1.02);
+        }
+
+        .description-section {
+            background: #fff;
+            padding: 20px 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #444;
         }
 
         .menu-section {
             background-color: #fff8d5;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
+            padding: 25px 30px;
+            border-radius: 14px;
+            margin-bottom: 40px;
             border-left: 6px solid #ffefc5;
+            box-shadow: 0 4px 10px rgba(255, 238, 197, 0.4);
+        }
+
+        .menu-section h4 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #bb8f00;
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 3px rgba(187, 143, 0, 0.2);
+        }
+
+        .menu-section ul {
+            list-style-type: disc;
+            padding-left: 1.2rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .reviews {
+            background: #f9f9f9;
+            padding: 25px 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .reviews h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 1.3rem;
+            border-bottom: 3px solid #34495e;
+            padding-bottom: 8px;
+        }
+
+        .reviews ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .reviews ul li {
+            background: #fff;
+            margin-bottom: 12px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .reviews ul li::before {
+            content: "❝";
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 2rem;
+            color: #bb8f00;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+
+        .reviews p {
+            font-style: italic;
+            color: #999;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 20px 0;
         }
     </style>
-    </head>
-    <body>
 
-    <div class="container my-5">
+    <div class="container">
 
-
-        <h1 class="mb-4 text-center">{{ restaurant.name }}</h1>
-
+        <h1>{{ restaurant.name }}</h1>
 
         <div id="carouselRestaurant" class="carousel slide mb-5" data-bs-ride="carousel">
             <div class="carousel-inner">
@@ -51,24 +147,21 @@
             </button>
         </div>
 
-        <div class="mb-4">
+        <div class="description-section">
             <h3>Опис ресторану</h3>
             <p>{{ restaurant.description }}</p>
         </div>
 
-
         <div class="menu-section">
             <h4>Меню</h4>
             <ul>
-                {% for item in restaurant.menu.split(' ') %}
-                    <li>{{ item }}</li>
+                {% for item in restaurant.menu.split(';') %}
+                    <li>{{ item.strip() }}</li>
                 {% endfor %}
             </ul>
         </div>
 
+
+
     </div>
-
-    </body>
-
-
 {% endblock %}

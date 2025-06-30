@@ -1,6 +1,11 @@
 from pydantic import BaseModel, EmailStr, Field, ValidationInfo, model_validator
 
 
+class NewComment(BaseModel):
+    restaurant_id: int
+    text: str
+
+
 class BaseFields(BaseModel):
     email: EmailStr = Field(description="User email", examples=["artem.chebanyuk@gmail.com"])
     name: str = Field(description="User nickname", examples=["Casper"])

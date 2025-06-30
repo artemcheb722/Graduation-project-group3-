@@ -32,8 +32,8 @@ async def get_user_info(access_token: str):
             headers={"Authorization": f'Bearer {access_token}'}
 
         )
-        print(response.json())
-        return response.json()
+        user_data = response.json()
+        return user_data
 
 
 async def get_current_user_with_token(request: Request) -> dict:
@@ -41,6 +41,7 @@ async def get_current_user_with_token(request: Request) -> dict:
     if not access_token:
         return {}
     user = await get_user_info(access_token)
+    print("Текущий пользователь:", user)
     user['access_token'] = access_token
     return user
 
@@ -58,5 +59,19 @@ async def get_restaurant(pk: int):
     async with httpx.AsyncClient() as client:
         response = await client.get(
             url=f'{settings.BACKEND_API}/restaurants/{pk}',
+        )
+        return response.json()
+
+
+async def send_comment(access_token: str, restaurant_id: int, text: str, author_name: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.patch(
+            url=f'{settings.BACKEND_API}/users/users/add_comment',
+            json={
+                "restaurant_id": restaurant_id,
+                "text": text,
+                "author_name": author_name
+            },
+            headers={"Authorization": f"Bearer {access_token}"}
         )
         return response.json()
