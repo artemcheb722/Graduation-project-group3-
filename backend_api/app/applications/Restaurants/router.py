@@ -5,6 +5,7 @@ from services.s3.s3 import s3_storage
 from applications.Restaurants.models_restaurants import Restaurants
 from database.session_dependencies import get_async_session
 import uuid
+from sqlalchemy import String, Text
 from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk
 from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema
 from applications.auth.security import admin_required
@@ -20,9 +21,10 @@ async def create_restaurant(
         main_image: UploadFile,
         images: list[UploadFile] = None,
         name: str = Body(max_lenght=50),
-        description: str = Body(max_lenght=150),
-        menu: str = Body(max_lenght=100),
-        feedback: str = Body(max_lenght=120),
+        description: str = Body(Text),
+        menu: str = Body(Text),
+        comments: str = Body(max_lenght=2500),
+        detailed_description: str = Body(Text),
         session: AsyncSession = Depends(get_async_session)
 ) -> RestaurantSchema:
     restaurant_uuid = uuid.uuid4()
@@ -35,7 +37,8 @@ async def create_restaurant(
 
     created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name,
                                                         description=description, menu=menu,
-                                                        feedback=feedback, main_image=main_image, images=images_urls,
+                                                        comments=comments, detailed_description=detailed_description,
+                                                        main_image=main_image, images=images_urls,
                                                         session=session)
 
     return created_restaurant

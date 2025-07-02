@@ -41,7 +41,6 @@ async def get_current_user_with_token(request: Request) -> dict:
     if not access_token:
         return {}
     user = await get_user_info(access_token)
-    print("Текущий пользователь:", user)
     user['access_token'] = access_token
     return user
 

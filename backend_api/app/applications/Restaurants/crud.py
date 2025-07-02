@@ -9,13 +9,14 @@ from applications.Restaurants.schemas import SearchParamsSchema, SortEnum, SortB
 from applications.Restaurants.models_restaurants import Restaurants
 
 
-async def create_restaurant_in_db(restaurant_uuid, name, description, menu, feedback, main_image, images, session) -> Restaurants:
+async def create_restaurant_in_db(restaurant_uuid, name, description, menu, detailed_description, comments, main_image, images, session) -> Restaurants:
     new_restaurant = Restaurants(
         uuid_data=restaurant_uuid,
         name=name.strip(),
         description=description.strip(),
         menu=menu,
-        feedback=feedback,
+        comments=comments,
+        detailed_description=detailed_description,
         main_image=main_image,
         images=images,
     )

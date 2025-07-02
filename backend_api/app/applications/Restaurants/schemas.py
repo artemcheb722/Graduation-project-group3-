@@ -9,7 +9,8 @@ class RestaurantSchema(BaseModel):
     name: str
     description: str
     menu: str
-    feedback: str
+    comments: str
+    detailed_description: str
     main_image: str
     images: list[str]
 

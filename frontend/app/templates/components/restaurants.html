@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #FAFAFA;
+            background-color: #FFE8D6;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -24,7 +24,7 @@
         }
 
         .restaurant-card {
-            background-color: white;
+            background-color: #FFE8D6;
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -33,7 +33,7 @@
             cursor: default;
         }
 
-        /* Добавляем плавный подъем при наведении */
+
         .restaurant-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
@@ -127,7 +127,7 @@
 
         .more-info {
             margin-top: 20px;
-            text-align: right;
+            text-align: left;
         }
 
         .more-info-btn {
@@ -153,10 +153,8 @@
 </br>
 </br>
 </br>
-{% set colors = ['#ffcccb', '#90ee90', '#ffd700', '#87ceeb', '#dda0dd', '#ffa07a'] %}
 
 {% for restaurant in restaurants %}
-    {% set bg_color = colors[loop.index0 % colors|length] %}
     <div class="container">
         <div class="restaurant-card" style="background-color: {{ bg_color }};">
             <div class="restaurant-info">
@@ -167,11 +165,14 @@
                 <div class="menu">
                     <h3>Меню:</h3>
                     <ul>
-                        {% for item in restaurant.menu.split('\n') %}
-                            <li>{{ item }}</li>
+                        {% set items = restaurant.menu.split(';') %}
+                        {% for item in items[:4] %}
+                            <li>{{ item.strip() }}</li>
                         {% endfor %}
+                        {% if items|length > 4 %}
+                            <li>...</li>
+                        {% endif %}
                     </ul>
-
                 </div>
 
                 <div class="more-info" style="margin-top: 10px;">
