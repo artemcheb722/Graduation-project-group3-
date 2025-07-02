@@ -1,10 +1,12 @@
 
 {% if user %}
-
-<button type="button" class="btn btn btn-light">User: {{ user.name }}</button>
-<a href="{{ url_for('logout') }}" class="btn btn-warning">Logout</a>
+<div class="d-flex align-items-center gap-2">
+  <span class="btn btn-light shadow-sm rounded-pill px-3 fw-semibold">
+    <i class="bi bi-person-circle me-1"></i> {{ user.name }}
+  </span>
+  <a href="{{ url_for('logout') }}" class="btn btn-warning rounded">Logout</a>
+</div>
 {% else %}
-<a href="{{ url_for('login') }}" class="btn btn-success">Login</a>
-<a href="{{ url_for('register') }}" class="btn btn-warning">Register</a>
-
+<a href="{{ url_for('login') }}" class="btn btn-success rounded">Login</a>
+<a href="{{ url_for('register') }}" class="btn btn-warning rounded">Register</a>
 {% endif %}

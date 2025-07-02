@@ -149,7 +149,7 @@
 
         <div class="description-section">
             <h3>Опис ресторану</h3>
-            <p>{{ restaurant.description }}</p>
+            <p>{{ restaurant.detailed_description }}</p>
         </div>
 
         <div class="menu-section">
@@ -161,6 +161,18 @@
             </ul>
         </div>
 
+        <div class="reviews">
+            <h3>Відгуки:</h3>
+            <ul>
+                {% for item in restaurant.comments.split(';') %}
+                    <li>&nbsp;&nbsp;&nbsp;{{ item.strip() }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        </br>
+        <a href="{{ url_for('index') }}" class="btn btn-primary shadow-sm rounded px-4 py-2 fw-semibold">
+            ⬅ Повернутися на головну
+        </a>
 
 
     </div>
