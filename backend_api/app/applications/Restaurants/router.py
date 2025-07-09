@@ -10,7 +10,7 @@ from applications.Restaurants.crud import create_restaurant_in_db, get_restauran
 from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema
 from applications.auth.security import admin_required
 from applications.users.models import User
-
+from sqlalchemy import select
 router_restaurants = APIRouter()
 
 
@@ -44,6 +44,17 @@ async def create_restaurant(
 
     return created_restaurant
 
+
+@router_restaurants.get('/by_city')
+async def get_restaurants_by_city(city: str, session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(
+        select(Restaurants).where(Restaurants.city == city)
+    )
+    restaurants = result.scalars().all()
+    return {
+        "items": restaurants,
+        "total": len(restaurants),
+    }
 
 @router_restaurants.get('/{pk}')
 async def get_product(pk: int, session: AsyncSession = Depends(get_async_session), ) -> RestaurantSchema:
