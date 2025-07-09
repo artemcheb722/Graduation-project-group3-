@@ -37,32 +37,168 @@
 
     .custom-navbar input[type="search"] {
         height: 30px;
+        padding: 2px 8px;
+        font-size: 0.9rem;
+    }
 
-    /*
-       padding: 2px 8px;
-       font-size: 0.9rem;
-     }
+    .custom-navbar button[type="submit"] {
+        height: 30px;
+        padding: 2px 12px;
+        font-size: 0.9rem;
+    }
 
-     .custom-navbar button[type="submit"] {
-       height: 30px;
-       padding: 2px 12px;
-       font-size: 0.9rem;
-     }
+    .custom-select-wrapper {
+        max-width: 400px; /* Ограничивает ширину */
+        margin: 10px auto; /* Центрирует */
+    }
+
+    .custom-select-wrapper select {
+        padding: 10px 15px;
+        border-radius: 12px;
+        border: 1px solid #ced4da;
+        background-color: #f8f9fa;
+        font-size: 16px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .custom-select-wrapper select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        background-color: #ffffff;
+    }
+
+    .custom-navbar {
+        background: linear-gradient(to right, #2a60ff, #5e00ff);
+        padding: 0.5rem 1rem;
+    }
+
+    .custom-navbar .container-fluid {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .custom-navbar .navbar-brand {
+        margin-right: 0.5rem;
+    }
+
+    .custom-navbar form {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0 1rem;
+    }
+
+    .custom-navbar input[type="search"] {
+        min-width: 180px;
+        height: 30px;
+        padding: 2px 8px;
+        font-size: 0.9rem;
+    }
+
+    .custom-navbar button[type="submit"] {
+        height: 30px;
+        padding: 2px 12px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .custom-navbar .login-section {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .custom-select-wrapper {
+        max-width: 200px;
+    }
+
+    .custom-select-wrapper select {
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        background-color: #f8f9fa;
+        font-size: 16px;
+        transition: all 0.9s ease-in-out;
+    }
+
+    .custom-select-wrapper select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.8rem rgba(13, 110, 253, 0.25);
+        background-color: #ffffff;
+    }
+
+    form {
+        margin: 0;
+    }
+
+    .custom-navbar input[type="search"] {
+        height: 30px;
+        font-size: 0.9rem;
+        min-width: 180px;
+    }
+
+    .custom-navbar button[type="submit"] {
+        height: 30px;
+        font-size: 0.9rem;
+        padding: 2px 12px;
+    }
+
+
 </style>
 <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', path='images/photo_2025-07-03_19-48-44-removebg-preview.png') }}" alt="Main"
-                 style="height: 55px;">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand me-2" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', path='images/photo_2025-07-03_19-48-44-removebg-preview.png') }}"
+                     alt="Main" style="height: 55px;">
+            </a>
+
+            <div class="custom-select-wrapper mb-0">
+                <select class="form-select form-select-sm city-select" aria-label="Виберіть місто">
+                    <option selected disabled>Виберіть своє місто:</option>
+                    <option value="kyiv">Київ</option>
+                    <option value="kharkiv">Харків</option>
+                    <option value="odesa">Одеса</option>
+                    <option value="dnipro">Дніпро</option>
+                    <option value="zaporizhzhia">Запоріжжя</option>
+                    <option value="lviv">Львів</option>
+                    <option value="kryvyi-rih">Кривий Ріг</option>
+                    <option value="mykolaiv">Миколаїв</option>
+                    <option value="mariupol">Маріуполь</option>
+                    <option value="luhansk">Луганськ</option>
+                    <option value="vinnytsia">Вінниця</option>
+                    <option value="poltava">Полтава</option>
+                    <option value="chernihiv">Чернігів</option>
+                    <option value="cherkasy">Черкаси</option>
+                    <option value="zhytomyr">Житомир</option>
+                    <option value="sumy">Суми</option>
+                    <option value="rivne">Рівне</option>
+                    <option value="ivano-frankivsk">Івано-Франківськ</option>
+                    <option value="ternopil">Тернопіль</option>
+                    <option value="uzhhorod">Ужгород</option>
+                    <option value="khmelnytskyi">Хмельницький</option>
+                    <option value="chernivtsi">Чернівці</option>
+                    <option value="kropyvnytskyi">Кропивницький</option>
+                    <option value="bila-tserkva">Біла Церква</option>
+                </select>
+            </div>
+        </div>
+
+
+        <a href="{{ url_for('favourite_restaurants') }}" class="btn btn-success rounded">Улюблені</a>
+
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <form class="d-flex" role="search" method="post" action="{{ url_for('index') }}">
-            <input name="query" class="form-control me-2" type="search" placeholder="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        <div class="d-flex align-items-center gap-2">
+            <form class="d-flex align-items-center" method="post" action="{{ url_for('index') }}">
+                <input name="query" class="form-control me-2" type="search" placeholder="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
 
         {% include "components/login_comp.html" %}
     </div>

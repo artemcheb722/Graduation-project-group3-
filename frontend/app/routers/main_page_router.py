@@ -37,6 +37,12 @@ async def index(request: Request, query: str = Form(''), user: dict = Depends(ge
     return templates.TemplateResponse('index.html', context=context)
 
 
+
+@router.post('/favourite_restaurants')
+async def favourite_restaurants():
+    return templates.TemplateResponse('favourite_restaurants.html')
+
+
 @router.post("/add_comment/{restaurant_id}", name="add_comment")
 async def add_comment(
     restaurant_id: int,
