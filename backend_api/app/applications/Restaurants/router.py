@@ -21,6 +21,7 @@ async def create_restaurant(
         main_image: UploadFile,
         images: list[UploadFile] = None,
         name: str = Body(max_lenght=50),
+        city: str = Body(max_lenght=300),
         description: str = Body(Text),
         menu: str = Body(Text),
         comments: str = Body(max_lenght=2500),
@@ -35,7 +36,7 @@ async def create_restaurant(
         url = await s3_storage.upload_product_image(image, restaurant_uuid=restaurant_uuid)
         images_urls.append(url)
 
-    created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name,
+    created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name, city=city,
                                                         description=description, menu=menu,
                                                         comments=comments, detailed_description=detailed_description,
                                                         main_image=main_image, images=images_urls,
