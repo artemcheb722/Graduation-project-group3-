@@ -7,6 +7,7 @@ from typing import Annotated, Optional
 class RestaurantSchema(BaseModel):
     id: int
     name: str
+    city: str
     description: str
     menu: str
     comments: str

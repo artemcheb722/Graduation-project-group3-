@@ -61,6 +61,15 @@ async def get_restaurant(pk: int):
         )
         return response.json()
 
+async def get_restaurant_by_city(city: str = ""):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=f'{settings.BACKEND_API}/restaurants/by_city',
+            params={"city": city}
+
+        )
+        return response.json()
+
 
 async def send_comment(access_token: str, restaurant_id: int, text: str, author_name: str):
     async with httpx.AsyncClient() as client:

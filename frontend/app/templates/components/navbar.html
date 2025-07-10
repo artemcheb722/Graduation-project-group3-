@@ -1,69 +1,49 @@
-<style>
-    .custom-navbar {
-        background: linear-gradient(to right, #2a60ff, #5e00ff);
-        padding: 0.5rem 1rem;
-    }
-
-    .custom-navbar .container-fluid {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .custom-navbar .navbar-brand {
-        margin-right: auto;
-    }
-
-    .custom-navbar form {
-        display: flex;
-        gap: 0.5rem;
-        margin: 0 1rem;
-    }
-
-    .custom-navbar input[type="search"] {
-        min-width: 180px;
-    }
-
-    .custom-navbar button[type="submit"] {
-        white-space: nowrap;
-    }
-
-
-    .custom-navbar .login-section {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .custom-navbar input[type="search"] {
-        height: 30px;
-
-    /*
-       padding: 2px 8px;
-       font-size: 0.9rem;
-     }
-
-     .custom-navbar button[type="submit"] {
-       height: 30px;
-       padding: 2px 12px;
-       font-size: 0.9rem;
-     }
-</style>
-<nav class="navbar navbar-expand-lg custom-navbar fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', path='images/photo_2025-07-03_19-48-44-removebg-preview.png') }}" alt="Main"
-                 style="height: 55px;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container-fluid py-2">
+        <a class="navbar-brand d-flex align-items-center me-4" href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', path='images/photo_2025-07-03_19-48-44-removebg-preview.png') }}"
+                 alt="Main" style="height: 40px;">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <form class="d-flex" role="search" method="post" action="{{ url_for('index') }}">
-            <input name="query" class="form-control me-2" type="search" placeholder="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        <div class="collapse navbar-collapse align-items-center" id="navbarSupportedContent">
+            <!-- Left side -->
+            <div class="d-flex align-items-center flex-grow-1 gap-3">
+                <form method="post" class="d-flex align-items-center">
+                    <select name="city" class="form-select" style="min-width: 190px;">
+                        <option value="">Виберіть своє місто:</option>
+                        {% for city_option in [
+                            'Київ', 'Харків', 'Одеса', 'Дніпро', 'Запоріжжя',
+                            'Львів', 'Кривий Ріг', 'Миколаїв', 'Маріуполь',
+                            'Луганськ', 'Вінниця', 'Полтава', 'Чернігів',
+                            'Черкаси', 'Житомир', 'Суми', 'Рівне',
+                            'Івано-Франківськ', 'Тернопіль'
+                        ] %}
+                            <option value="{{ city_option }}"
+                                    {% if selected_city == city_option %}selected{% endif %}>{{ city_option }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-outline-light ms-2">Шукати</button>
+                </form>
 
-        {% include "components/login_comp.html" %}
+                <a href="{{ url_for('favourite_restaurants') }}" class="btn btn-success">Улюблені</a>
+            </div>
+
+
+            <div class="d-flex align-items-center gap-3">
+                <form class="d-flex align-items-center" method="post" action="{{ url_for('index') }}">
+                    <input name="query" class="form-control me-2" type="search" placeholder="Search"
+                           aria-label="Search">
+                    <button class="btn btn-outline-warning" type="submit">Шукати</button>
+                </form>
+
+                {% include "components/login_comp.html" %}
+            </div>
+        </div>
     </div>
 </nav>

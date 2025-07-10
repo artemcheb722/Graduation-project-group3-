@@ -1,8 +1,15 @@
+
+
 {% extends "components/base.html" %}
 
 
-  {% block content %}
+{% block content %}
 
-  {%  include "components/restaurants.html" %}
-
-  {% endblock %}
+    {% include "components/restaurants.html" %}
+    {% if show_not_found %}
+        </br>
+        <div class="alert alert-danger" role="alert">
+            Такого ресторану не знайдено, перевірте, чи правильно ви написали назву.
+        </div>
+    {% endif %}
+{% endblock %}

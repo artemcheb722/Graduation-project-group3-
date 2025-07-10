@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Form, Depends, status
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import  RedirectResponse
 
-from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant, get_user_info
+from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant, get_user_info, get_restaurant_by_city
 
 
 from backend_api.api import register_user, send_comment
@@ -16,10 +16,18 @@ templates = Jinja2Templates(directory='templates')
 
 @router.get('/')
 @router.post('/')
-async def index(request: Request, query: str = Form(''), user: dict = Depends(get_current_user_with_token)):
-    restaurants_response = await get_restaurants(query)
-    restaurants = restaurants_response['items']
+async def index(request: Request,
+                city: str = Form(''),
+                query: str = Form(''),
+                user: dict = Depends(get_current_user_with_token)):
+    if city:
+        restaurants_response = await get_restaurant_by_city(city=city)
+    else:
+        restaurants_response = await get_restaurants(query)
 
+
+    restaurants = restaurants_response['items']
+    show_not_found = query and not restaurants
     for restaurant in restaurants:
         restaurant['comments'] = [
             {
@@ -30,11 +38,24 @@ async def index(request: Request, query: str = Form(''), user: dict = Depends(ge
                 if int(comment["restaurant_id"]) == int(restaurant["id"])
         ]
 
-    context = {'request': request, 'restaurants': restaurants}
+    context = {
+        'request': request,
+        'restaurants': restaurants,
+        'selected_city': city,
+        'query': query,
+        'show_not_found': show_not_found
+    }
+
     if user.get('name'):
         context['user'] = user
 
     return templates.TemplateResponse('index.html', context=context)
+
+
+
+@router.post('/favourite_restaurants')
+async def favourite_restaurants():
+    return templates.TemplateResponse('favourite_restaurants.html')
 
 
 @router.post("/add_comment/{restaurant_id}", name="add_comment")
