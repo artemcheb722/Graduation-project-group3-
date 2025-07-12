@@ -5,12 +5,16 @@ from services.s3.s3 import s3_storage
 from applications.Restaurants.models_restaurants import Restaurants
 from database.session_dependencies import get_async_session
 import uuid
-from sqlalchemy import String, Text
-from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk
-from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema
-from applications.auth.security import admin_required
+from sqlalchemy import  Text
+from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk, create_comment
+from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema, CommentResponse, CommentCreate
 from applications.users.models import User
 from sqlalchemy import select
+from applications.auth.security import get_current_user
+
+
+
+
 router_restaurants = APIRouter()
 
 
@@ -69,3 +73,19 @@ async def get_restaurants(params: Annotated[SearchParamsSchema, Depends()],
                           session: AsyncSession = Depends(get_async_session)):
     result = await get_restaurants_data(params, session)
     return result
+
+
+
+@router_restaurants.post("/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+async def add_comment(
+    data: CommentCreate,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(get_current_user)
+):
+    created = await create_comment(
+        user_id=current_user.id,
+        restaurant_id=data.restaurant_id,
+        feedback=data.feedback,
+        session=session
+    )
+    return created

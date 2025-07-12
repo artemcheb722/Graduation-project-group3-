@@ -15,6 +15,21 @@ class RestaurantSchema(BaseModel):
     main_image: str
     images: list[str]
 
+class CommentCreate(BaseModel):
+    restaurant_id: int
+    feedback: str
+
+
+class CommentResponse(BaseModel):
+    id: int
+    user_id: int
+    restaurant_id: int
+    feedback: str
+
+    class Config:
+        from_attributes = True
+
+
 class SortEnum(StrEnum):
     ASC = 'asc'
     DESC = 'desc'

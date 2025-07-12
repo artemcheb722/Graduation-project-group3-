@@ -4,9 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import asc, desc, select, func, or_, and_
 import math
 
-from applications.Restaurants.schemas import SearchParamsSchema, SortEnum, SortByEnum
+from applications.Restaurants.schemas import SearchParamsSchema, SortEnum, SortByEnum, CommentCreate
 
-from applications.Restaurants.models_restaurants import Restaurants
+from applications.Restaurants.models_restaurants import Restaurants, RestaurantComments
 
 
 async def create_restaurant_in_db(restaurant_uuid, name, city, description, menu, detailed_description, comments, main_image, images, session) -> Restaurants:
@@ -62,3 +62,15 @@ async def get_restaurant_by_pk(pk: int, session: AsyncSession) -> Restaurants | 
     query = select(Restaurants).filter(Restaurants.id == pk)
     result = await session.execute(query)
     return result.scalar_one_or_none()
+
+
+async def create_comment(user_id: int, restaurant_id: int, feedback: str, session: AsyncSession) -> RestaurantComments:
+    created_comment = RestaurantComments(
+        user_id=user_id,
+        restaurant_id=restaurant_id,
+        feedback=feedback
+    )
+
+    session.add(created_comment)
+    await session.commit()
+    return created_comment
