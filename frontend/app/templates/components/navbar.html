@@ -45,23 +45,23 @@
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
     <div class="container-fluid py-2">
 
-        <!-- Логотип -->
+
         <a class="navbar-brand d-flex align-items-center me-4" href="{{ url_for('index') }}">
             <img src="{{ url_for('static', path='images/png-transparent-computer-icons-house-house-logo-angle-text-logo-thumbnail-removebg-preview.png') }}"
                  alt="Main">
         </a>
 
-        <!-- Тогглер -->
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Содержимое навбара -->
+
         <div class="collapse navbar-collapse align-items-center justify-content-between" id="navbarSupportedContent">
 
-            <!-- Левая часть -->
+
             <div class="d-flex align-items-center flex-grow-1 gap-3">
                 <form method="post" class="d-flex align-items-center">
                     <select name="city" class="form-select" style="min-width: 190px;">
@@ -83,7 +83,7 @@
                 <a href="{{ url_for('favourite_restaurants') }}" class="btn btn-light">Улюблені</a>
             </div>
 
-            <!-- Правая часть -->
+
             <div class="d-flex align-items-center gap-3">
                 <form class="d-flex align-items-center" method="post" action="{{ url_for('index') }}">
                     <input name="query" class="form-control" type="search" placeholder="Search"
@@ -91,7 +91,6 @@
                     <button class="btn btn-light" type="submit">Шукати</button>
                 </form>
 
-                <!-- Подключение логина и регистрации -->
                 {% include "components/login_comp.html" %}
             </div>
         </div>
