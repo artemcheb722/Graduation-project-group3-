@@ -5,12 +5,20 @@ from services.s3.s3 import s3_storage
 from applications.Restaurants.models_restaurants import Restaurants
 from database.session_dependencies import get_async_session
 import uuid
-from sqlalchemy import String, Text
-from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk
-from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema
-from applications.auth.security import admin_required
+from sqlalchemy import  Text
+from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk, create_comment
+from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema, CommentResponse, CommentCreate
 from applications.users.models import User
 from sqlalchemy import select
+from applications.Restaurants.models_restaurants import RestaurantComments
+from applications.auth.security import get_current_user
+from fastapi import Form
+from fastapi.responses import RedirectResponse
+from starlette.status import HTTP_303_SEE_OTHER
+
+
+
+
 router_restaurants = APIRouter()
 
 
@@ -24,7 +32,6 @@ async def create_restaurant(
         city: str = Body(max_lenght=300),
         description: str = Body(Text),
         menu: str = Body(Text),
-        comments: str = Body(max_lenght=2500),
         detailed_description: str = Body(Text),
         session: AsyncSession = Depends(get_async_session)
 ) -> RestaurantSchema:
@@ -38,7 +45,7 @@ async def create_restaurant(
 
     created_restaurant = await  create_restaurant_in_db(restaurant_uuid=restaurant_uuid, name=name, city=city,
                                                         description=description, menu=menu,
-                                                        comments=comments, detailed_description=detailed_description,
+                                                        detailed_description=detailed_description,
                                                         main_image=main_image, images=images_urls,
                                                         session=session)
 
@@ -69,3 +76,50 @@ async def get_restaurants(params: Annotated[SearchParamsSchema, Depends()],
                           session: AsyncSession = Depends(get_async_session)):
     result = await get_restaurants_data(params, session)
     return result
+
+
+@router_restaurants.post('/create_comments', response_model=CommentResponse)
+async def post_comments(
+    feedback: CommentCreate,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    restaurant = await get_restaurant_by_pk(feedback.restaurant_id, session)
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Ресторан не знайдено")
+
+    comment = await create_comment(
+        user_id=user.id,
+        restaurant_id=feedback.restaurant_id,
+        feedback=feedback.text,
+        session=session
+    )
+
+    return CommentResponse(
+        id=comment.id,
+        user_id=comment.user_id,
+        restaurant_id=comment.restaurant_id,
+        text=comment.feedback,  # ⚠️ или .text если ты переименовывал
+        user_name=user.name  # используем текущего юзера
+    )
+
+@router_restaurants.get("/comments/{restaurant_id}")
+async def get_comments_for_restaurant(
+    restaurant_id: int,
+    session: AsyncSession = Depends(get_async_session)
+):
+    stmt = (
+        select(RestaurantComments, User.name)
+        .join(User, User.id == RestaurantComments.user_id)
+        .where(RestaurantComments.restaurant_id == restaurant_id)
+    )
+    result = await session.execute(stmt)
+    feedbacks_with_users = result.all()
+
+    return [
+        {
+            "text": comment.feedback,
+            "author": name
+        }
+        for comment, name in feedbacks_with_users
+    ]

@@ -83,3 +83,28 @@ async def send_comment(access_token: str, restaurant_id: int, text: str, author_
             headers={"Authorization": f"Bearer {access_token}"}
         )
         return response.json()
+
+## current func to create comment
+async def create_comment(restaurant_id: int, feedback: str, token: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            url=f'{settings.BACKEND_API}/restaurants/create_comments',
+            json={
+                'restaurant_id': restaurant_id,
+                'feedback': feedback
+            },
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+        )
+        return response.json()
+
+
+
+async def get_all_comments(restaurant_id: int):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=f"{settings.BACKEND_API}/restaurants/comments/{restaurant_id}"
+        )
+        return response.json()
