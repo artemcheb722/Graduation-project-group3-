@@ -24,6 +24,7 @@ class Restaurants(ModelCommonMixin, Base):
     main_image: Mapped[str] = mapped_column(nullable=False)
     images: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     detailed_description: Mapped[str] = mapped_column(Text, nullable=True)
+    is_favourite: Mapped[bool] = mapped_column(default=False, nullable=True)
     comments_relation = relationship(
         "RestaurantComments",
         back_populates="restaurant",
