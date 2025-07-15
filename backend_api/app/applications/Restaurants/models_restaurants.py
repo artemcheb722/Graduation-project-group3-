@@ -42,3 +42,9 @@ class RestaurantComments(ModelCommonMixin, Base):
 
 
 
+class FavouriteRestaurants(ModelCommonMixin, Base):
+    __tablename__ = "favourite_restaurants"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    restaurant_id: Mapped[int] = mapped_column(ForeignKey("Restaurants.id"))
+
+
