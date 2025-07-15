@@ -24,7 +24,6 @@ class Restaurants(ModelCommonMixin, Base):
     main_image: Mapped[str] = mapped_column(nullable=False)
     images: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     detailed_description: Mapped[str] = mapped_column(Text, nullable=True)
-    is_favourite: Mapped[bool] = mapped_column(default=False, nullable=True)
     comments_relation = relationship(
         "RestaurantComments",
         back_populates="restaurant",
@@ -41,5 +40,11 @@ class RestaurantComments(ModelCommonMixin, Base):
     feedback: Mapped[str] = mapped_column(Text, nullable=True)
     restaurant = relationship("Restaurants", back_populates="comments_relation")
 
+
+
+class FavouriteRestaurants(ModelCommonMixin, Base):
+    __tablename__ = "favourite_restaurants"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    restaurant_id: Mapped[int] = mapped_column(ForeignKey("Restaurants.id"))
 
 
