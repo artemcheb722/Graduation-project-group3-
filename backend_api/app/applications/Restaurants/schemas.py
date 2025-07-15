@@ -10,21 +10,21 @@ class RestaurantSchema(BaseModel):
     city: str
     description: str
     menu: str
-    comments: str
     detailed_description: str
     main_image: str
     images: list[str]
 
 class CommentCreate(BaseModel):
     restaurant_id: int
-    feedback: str
+    text: str = Field(alias="feedback")
 
 
 class CommentResponse(BaseModel):
     id: int
     user_id: int
     restaurant_id: int
-    feedback: str
+    text: str
+    user_name: str
 
     class Config:
         from_attributes = True

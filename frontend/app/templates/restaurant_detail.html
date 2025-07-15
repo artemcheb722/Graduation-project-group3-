@@ -123,6 +123,23 @@
             text-align: center;
             padding: 20px 0;
         }
+
+        .add-review {
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            margin-top: 30px;
+        }
+
+        .add-review h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1E90FF;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid #1E90FF;
+            padding-bottom: 6px;
+        }
     </style>
 
     <div class="container">
@@ -161,15 +178,40 @@
             </ul>
         </div>
 
-        <div class="reviews">
-            <h3>Відгуки:</h3>
-            <ul>
-                {% for item in restaurant.comments.split(';') %}
-                    <li>&nbsp;&nbsp;&nbsp;{{ item.strip() }}</li>
-                {% endfor %}
-            </ul>
+        <div class="reviews mb-5">
+            <h3>Коментарі</h3>
+
+            {% if comments %}
+                <ul>
+                    {% for comment in comments %}
+                        <li>
+                            &nbsp; &nbsp;&nbsp<strong>{{ comment.author }}</strong>: {{ comment.text }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Коментарів ще немає.</p>
+            {% endif %}
         </div>
-        </br>
+
+        {% if request.cookies.access_token %}
+            <div class="add-review mb-5">
+                <h3>Додати свій коментар</h3>
+                <form method="post" action="{{ url_for('add_comment', restaurant_id=restaurant.id) }}">
+                    <div class="mb-3">
+            <textarea name="comment_text" class="form-control" rows="4"
+                      placeholder="Напишіть свій коментар..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Надіслати</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="alert alert-warning mt-4">
+                Щоб залишити свій коментар, будь ласка, <a href="{{ url_for('login') }}">увійдіть в аккаунт</a>.
+            </div>
+        {% endif %}
+
+
         <a href="{{ url_for('index') }}" class="btn btn-primary shadow-sm rounded px-4 py-2 fw-semibold">
             ⬅ Повернутися на головну
         </a>

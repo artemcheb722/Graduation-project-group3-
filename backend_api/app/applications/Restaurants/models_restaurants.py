@@ -21,7 +21,6 @@ class Restaurants(ModelCommonMixin, Base):
     city: Mapped[str] = mapped_column(String(300), nullable=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     menu: Mapped[str] = mapped_column(Text, nullable=False)
-    comments: Mapped[str] = mapped_column(String(2500), nullable=True)
     main_image: Mapped[str] = mapped_column(nullable=False)
     images: Mapped[list[str]] = mapped_column(ARRAY(String), default=list)
     detailed_description: Mapped[str] = mapped_column(Text, nullable=True)

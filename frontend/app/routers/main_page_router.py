@@ -4,8 +4,8 @@ from fastapi.responses import  RedirectResponse
 
 from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant, get_user_info, get_restaurant_by_city
 
-
-from backend_api.api import register_user, send_comment
+from fastapi import HTTPException
+from backend_api.api import register_user, send_comment, get_all_comments, create_comment
 
 router = APIRouter()
 
@@ -28,15 +28,6 @@ async def index(request: Request,
 
     restaurants = restaurants_response['items']
     show_not_found = query and not restaurants
-    for restaurant in restaurants:
-        restaurant['comments'] = [
-            {
-                "text": comment["text"],
-                "author": comment.get("author_name", "Anon")
-            }
-            for comment in user.get('comments', [])
-                if int(comment["restaurant_id"]) == int(restaurant["id"])
-        ]
 
     context = {
         'request': request,
@@ -58,43 +49,45 @@ async def favourite_restaurants():
     return templates.TemplateResponse('favourite_restaurants.html')
 
 
-@router.post("/add_comment/{restaurant_id}", name="add_comment")
-async def add_comment(
-    restaurant_id: int,
+@router.get("/restaurants/{restaurant_id}")
+async def restaurant_detail(
     request: Request,
-    comment_text: str = Form(...),
-    user: dict = Depends(get_current_user_with_token)
+    restaurant_id: int,
+
 ):
-    if not user.get("access_token"):
-        return RedirectResponse(request.url_for("login"), status_code=status.HTTP_303_SEE_OTHER)
+    restaurant = await  get_restaurant(restaurant_id)
+    comments = await get_all_comments(restaurant_id)
+
+    return templates.TemplateResponse("restaurant_detail.html", {
+        "request": request,
+        "restaurant": restaurant,
+        "comments": comments,
+    })
 
 
-    await send_comment(user["access_token"], restaurant_id, comment_text, user["name"])
 
 
-    updated_user = await get_user_info(user["access_token"])
+@router.post("/restaurants/{restaurant_id}/add_comment")
+async def add_comment(
+    request: Request,
+    restaurant_id: int,
+    comment_text: str = Form(...),
+):
+    token = request.cookies.get("access_token")
 
-    restaurants_response = await get_restaurants("")
-    restaurants = restaurants_response["items"]
+    if not token:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
-    for restaurant in restaurants:
-        restaurant['comments'] = [
-            {
-                "text": comment["text"],
-                "author": comment.get("author_name", "Anon")
-            }
-            for comment in updated_user.get("comments", [])
-            if int(comment["restaurant_id"]) == int(restaurant["id"])
-        ]
+    await create_comment(
+        restaurant_id=restaurant_id,
+        feedback=comment_text,
+        token=token
+    )
 
-    context = {
-        'request': request,
-        'restaurants': restaurants,
-        'user': updated_user
-    }
-
-    return templates.TemplateResponse("index.html", context=context)
-
+    return RedirectResponse(
+        url=request.url_for("restaurant_detail", restaurant_id=restaurant_id),
+        status_code=status.HTTP_303_SEE_OTHER
+    )
 
 
 
