@@ -5,18 +5,13 @@ from services.s3.s3 import s3_storage
 from applications.Restaurants.models_restaurants import Restaurants
 from database.session_dependencies import get_async_session
 import uuid
-from sqlalchemy import  Text
+from sqlalchemy import  Text, and_, delete
 from applications.Restaurants.crud import create_restaurant_in_db, get_restaurants_data, get_restaurant_by_pk, create_comment
 from applications.Restaurants.schemas import RestaurantSchema, SearchParamsSchema, CommentResponse, CommentCreate
 from applications.users.models import User
 from sqlalchemy import select
-from applications.Restaurants.models_restaurants import RestaurantComments
+from applications.Restaurants.models_restaurants import RestaurantComments, FavouriteRestaurants
 from applications.auth.security import get_current_user
-from fastapi import Form
-from fastapi.responses import RedirectResponse
-from starlette.status import HTTP_303_SEE_OTHER
-
-
 
 
 router_restaurants = APIRouter()
@@ -99,8 +94,9 @@ async def post_comments(
         id=comment.id,
         user_id=comment.user_id,
         restaurant_id=comment.restaurant_id,
-        text=comment.feedback,  # ⚠️ или .text если ты переименовывал
-        user_name=user.name  # используем текущего юзера
+        text=comment.feedback,
+        user_name=user.name,
+        created_comment=comment.created_at
     )
 
 @router_restaurants.get("/comments/{restaurant_id}")
@@ -119,7 +115,58 @@ async def get_comments_for_restaurant(
     return [
         {
             "text": comment.feedback,
-            "author": name
+            "author": name,
+            "created_at": comment.created_at
         }
         for comment, name in feedbacks_with_users
     ]
+
+@router_restaurants.post("/favourite/{restaurant_id}")
+async def add_to_favourite(
+    restaurant_id: int,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    fav = FavouriteRestaurants(user_id=user.id, restaurant_id=restaurant_id)
+    session.add(fav)
+    await session.commit()
+    return {"detail": "Added to favourites"}
+
+@router_restaurants.delete("/favourit/{restaurant_id}")
+async def remove_from_favourite(
+    restaurant_id: int,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_async_session)
+):
+    stmt = delete(FavouriteRestaurants).where(
+        and_(
+            FavouriteRestaurants.user_id == user.id,
+            FavouriteRestaurants.restaurant_id == restaurant_id
+        )
+    )
+    await session.execute(stmt)
+    await session.commit()
+    return {"detail": "Removed from favourites"}
+
+
+
+@router_restaurants.get("/restaurants/favourite/check/{restaurant_id}")
+async def check_if_favourite(
+    restaurant_id: int,
+    session: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(get_current_user)
+):
+    stmt = select(FavouriteRestaurants).where(
+        FavouriteRestaurants.restaurant_id == restaurant_id,
+        FavouriteRestaurants.user_id == current_user.id
+    )
+    result = await session.execute(stmt)
+    favourite = result.scalar_one_or_none()
+
+    if favourite:
+        return {"is_favourite": True}
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Ресторан не у списку улюблених"
+    )

@@ -1,3 +1,5 @@
+
+
 import httpx
 from settings import settings
 from fastapi import Request
@@ -108,3 +110,34 @@ async def get_all_comments(restaurant_id: int):
             url=f"{settings.BACKEND_API}/restaurants/comments/{restaurant_id}"
         )
         return response.json()
+
+
+async def add_to_favourite(restaurant_id: int, token: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            url=f"{settings.BACKEND_API}/restaurants/favourite/{restaurant_id}",
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+        )
+        return response.json()
+
+async def remove_from_favourite(restaurant_id: int, token: str):
+    async with httpx.AsyncClient() as client:
+        response = await client.delete(
+            url=f"{settings.BACKEND_API}/restaurants/favourite/{restaurant_id}",
+            headers={
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            }
+        )
+        return response.json()
+
+async def check_if_favourite(restaurant_id: int, token: str) -> bool:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=f"{settings.BACKEND_API}/restaurants/favourite/check/{restaurant_id}",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        return response.status_code == 200

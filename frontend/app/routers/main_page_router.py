@@ -3,9 +3,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import  RedirectResponse
 
 from backend_api.api import get_current_user_with_token, login_user, get_restaurants, get_restaurant, get_user_info, get_restaurant_by_city
-
+import humanize
+from datetime import datetime
 from fastapi import HTTPException
-from backend_api.api import register_user, send_comment, get_all_comments, create_comment
+from backend_api.api import register_user, send_comment, get_all_comments, create_comment, add_to_favourite, remove_from_favourite, check_if_favourite
 
 router = APIRouter()
 
@@ -49,6 +50,18 @@ async def favourite_restaurants():
     return templates.TemplateResponse('favourite_restaurants.html')
 
 
+def naturaltime(value):
+    if isinstance(value, str):
+        try:
+            value = datetime.fromisoformat(value)
+        except ValueError:
+            return value
+    return humanize.naturaltime(datetime.utcnow() - value)
+
+templates.env.filters["naturaltime"] = naturaltime
+
+
+
 @router.get("/restaurants/{restaurant_id}")
 async def restaurant_detail(
     request: Request,
@@ -90,11 +103,53 @@ async def add_comment(
     )
 
 
+@router.post("/restaurants/favourite/{restaurant_id}/add")
+async def add_to_favourite_route(
+    request: Request,
+    restaurant_id: int,
+):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url=request.url_for("login"), status_code=303)
+
+    await add_to_favourite(restaurant_id=restaurant_id, token=token)
+
+    return RedirectResponse(
+        url=request.url_for("restaurant_detail", restaurant_id=restaurant_id),
+        status_code=303
+    )
 
 
-@router.get('/restaurant/{restaurant_id}')
-async def restaurant_detail(request: Request, restaurant_id: int, user: dict = Depends(get_current_user_with_token)):
+@router.post("/restaurants/favourite/{restaurant_id}/remove")
+async def remove_from_favourite(
+    request: Request,
+    restaurant_id: int,
+):
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url=request.url_for("login"), status_code=303)
+
+    await remove_from_favourite(restaurant_id=restaurant_id, token=token)
+
+    return RedirectResponse(
+        url=request.url_for("restaurant_detail", restaurant_id=restaurant_id),
+        status_code=303
+    )
+
+
+
+
+
+
+@router.get('/restaurants/{restaurant_id}')
+async def restaurant_detail(
+    request: Request,
+    restaurant_id: int,
+    user: dict = Depends(get_current_user_with_token)
+):
     restaurant = await get_restaurant(restaurant_id)
+
+
     comments = []
     if user.get("comments"):
         comments = [
@@ -104,13 +159,22 @@ async def restaurant_detail(request: Request, restaurant_id: int, user: dict = D
         ]
     context = {
         'request': request,
-        "restaurant": restaurant,
-        "comments": comments,
+        'restaurant': restaurant,
+        'comments': comments,
+        'user': user if user.get("name") else None,
+        'is_favourite': False
     }
-    if user.get('name'):
-        context['user'] = user
-    response = templates.TemplateResponse('restaurant_detail.html', context=context)
-    return response
+
+
+    token = user.get("token")
+    if token:
+        try:
+            context["is_favourite"] = await check_if_favourite(restaurant_id, token)
+        except Exception as e:
+            print(f"[ERROR is_favourite]: {e}")
+            context["is_favourite"] = False
+
+    return templates.TemplateResponse('restaurant_detail.html', context=context)
 
 
 @router.get('/login')
