@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from enum import StrEnum
+from datetime import datetime
 
 from pydantic import BaseModel, Field
 from typing import Annotated, Optional
@@ -24,6 +25,7 @@ class CommentResponse(BaseModel):
     user_id: int
     restaurant_id: int
     text: str
+    created_at: datetime
     user_name: str
 
     class Config:

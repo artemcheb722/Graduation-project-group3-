@@ -185,7 +185,9 @@
                 <ul>
                     {% for comment in comments %}
                         <li>
-                            &nbsp; &nbsp;&nbsp<strong>{{ comment.author }}</strong>: {{ comment.text }}
+                            &nbsp; &nbsp;<strong>{{ comment.author }}</strong>: {{ comment.text }}
+                            <br>
+                            <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
                         </li>
                     {% endfor %}
                 </ul>
@@ -193,7 +195,6 @@
                 <p class="text-muted">Коментарів ще немає.</p>
             {% endif %}
         </div>
-
         {% if request.cookies.access_token %}
             <div class="add-review mb-5">
                 <h3>Додати свій коментар</h3>
@@ -207,11 +208,24 @@
             </div>
         {% else %}
             <div class="alert alert-warning mt-4">
-                Щоб залишити свій коментар, будь ласка, <a href="{{ url_for('login') }}">увійдіть в аккаунт</a>.
+                Щоб залишати свої коментарі, будь ласка, <a href="{{ url_for('login') }}">увійдіть в акаунт</a>.
             </div>
         {% endif %}
 
-
+        <form method="post"
+              action="{% if is_favourite %}
+                {{ url_for('remove_from_favourite_route', restaurant_id=restaurant.id) }}
+              {% else %}
+                {{ url_for('add_to_favourite_route', restaurant_id=restaurant.id) }}
+              {% endif %}">
+            <button type="submit" class="btn btn-link p-0 border-0" style="background: none;">
+                {% if is_favourite %}
+                    <i class="fa-solid fa-heart text-danger fs-4"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart text-secondary fs-4"></i>
+                {% endif %}
+            </button>
+        </form>
         <a href="{{ url_for('index') }}" class="btn btn-primary shadow-sm rounded px-4 py-2 fw-semibold">
             ⬅ Повернутися на головну
         </a>
